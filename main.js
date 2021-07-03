@@ -71,7 +71,7 @@ const setEventListeners = (function ()
 {
 	const gridListeners = (() =>
 	{
-		let currPlayer = 0;
+		let currPlayer = 1;
 
 		const addMarkCallBack = (e) =>
 		{

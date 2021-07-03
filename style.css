@@ -12,6 +12,19 @@ main
 	align-items: center;
 }
 
+a {
+	text-decoration: none;
+	color: inherit;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus-visible {
+	outline: none;
+}
+
 #counterDiv
 {
 	display: flex;
@@ -52,4 +65,21 @@ main
 
 	background-color: #ffffff;
 	font-size: xx-large;
+}
+
+#newGame
+{
+	border: 1px solid #5d5d5d;
+	border-radius: 10px;
+
+	padding: 10px;
+	background-color: #bdbdbd;
+
+	box-shadow: 3px 3px 3px;
+}
+
+#newGame:hover
+{
+	background-color: #cecece;
+	box-shadow: 5px 5px 3px;
 }
