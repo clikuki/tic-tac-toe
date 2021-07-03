@@ -29,6 +29,7 @@ a:focus-visible {
 {
 	display: flex;
 	justify-content: space-around;
+	align-items: center;
 
 	width: 80%;
 }
@@ -38,7 +39,7 @@ a:focus-visible {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;;
+	align-items: center;
 }
 
 #grid
