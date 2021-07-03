@@ -1,0 +1,54 @@
+html, body, main
+{
+	height: 100%;
+	font-family: "Roboto", sans-serif;
+}
+
+main
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#counterDiv
+{
+	display: flex;
+	justify-content: space-around;
+
+	width: 80%;
+	margin: 20px;
+}
+
+.counter
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#grid
+{
+	--grid-size: 300px;
+
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	gap: 10px;
+
+	width: var(--grid-size);
+	height: var(--grid-size);
+	background-color: #000000;
+}
+
+.gridSpace
+{
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+
+	background-color: #ffffff;
+}

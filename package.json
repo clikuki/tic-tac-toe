@@ -1,0 +1,16 @@
+{
+  "name": "tic-tac-toe",
+  "version": "1.0.0",
+  "description": "A Tic-Tac-Toe game in browser",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Clikuki",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^7.30.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.23.4"
+  }
+}
