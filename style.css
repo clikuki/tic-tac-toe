@@ -18,7 +18,6 @@ main
 	justify-content: space-around;
 
 	width: 80%;
-	margin: 20px;
 }
 
 .counter
@@ -26,7 +25,7 @@ main
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	align-items: center;
+	align-items: center;;
 }
 
 #grid
@@ -41,6 +40,7 @@ main
 	width: var(--grid-size);
 	height: var(--grid-size);
 	background-color: #000000;
+	margin: 20px;
 }
 
 .gridSpace
@@ -51,4 +51,5 @@ main
 	align-items: center;
 
 	background-color: #ffffff;
+	font-size: xx-large;
 }

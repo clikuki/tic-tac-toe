@@ -1,49 +1,110 @@
-const gridSpaces = document.querySelectorAll('#grid > .gridSpace');
+const gridEl = document.querySelectorAll('#grid > .gridSpace');
+const newGameBtn = document.querySelector('#newGame');
 
 const grid = (function ()
 {
-	const gridSpaceArray = [null, null, null, null, null, null, null, null, null];
+	// private
 
-	const clearGridArray = () =>
+	const gridMarksArray = (() =>
 	{
-		gridSpaceArray.length = 0;
+		const arr = [];
 
-		for(let i = 0; i < gridSpaces.length; i++)
+		for(let i = 0; i < gridEl.length; i++)
 		{
-			gridSpaceArray.push(null);
+			arr.push(null);
 		}
-	};
 
-	const placeAt = (markerType, pos) =>
+		return arr;
+	})();
+
+	function updateGrid()
+	{
+		for(const [i, gridSpace] of Object.entries(gridEl))
+		{
+			if(gridMarksArray[i] === null)
+			{
+				gridSpace.textContent = '';
+			}
+			else
+			{
+				const marker = gridMarksArray[i] ? '✕' : '◯';
+
+				gridSpace.textContent = marker;
+			}
+		}
+	}
+
+	// public
+
+	function clear()
+	{
+		gridMarksArray.length = 0;
+
+		for(let i = 0; i < gridEl.length; i++)
+		{
+			gridMarksArray.push(null);
+		}
+
+		updateGrid();
+	}
+
+	function placeAt(markerType, pos)
 	{
 		if(markerType > 1 || markerType < 0) return;
+		if(pos > gridMarksArray.length - 1 || pos < 0) return;
+		if(gridMarksArray[pos] !== null) return;
 
-		gridSpaceArray[pos] = markerType;
-	};
+		gridMarksArray[pos] = markerType;
+		updateGrid();
+	}
 
-	// '✕' : '◯'
-
-	const getGridArray = () => gridSpaceArray;
+	const getGrid = () => gridMarksArray;
 
 	return {
-		clearGridArray,
+		clear,
 		placeAt,
-		getGridArray,
+		getGrid,
 	};
 })();
 
-function setEventListeners()
+const setEventListeners = (function ()
 {
-	for(const gridSpace of gridSpaces)
+	const gridListeners = (() =>
 	{
-		gridSpace.addEventListener('click', (e) =>
-		{
-			const elIndex = Array.prototype.indexOf.call(gridSpaces, e.target);
+		let currPlayer = 0;
 
-			grid.placeAt(1, elIndex);
-		});
-	}
-}
+		const addMarkCallBack = (e) =>
+		{
+			if(e.target.textContent !== '') return;
+
+			const elIndex = Array.prototype.indexOf.call(gridEl, e.target);
+
+			grid.placeAt(currPlayer, elIndex);
+
+			if(!currPlayer) currPlayer = 1;
+			else currPlayer = 0;
+		};
+
+		return () =>
+		{
+			for(const gridSpace of gridEl)
+			{
+				gridSpace.addEventListener('click', addMarkCallBack);
+			}
+		};
+	})();
+
+	const newGameListener = () =>
+	{
+		newGameBtn.addEventListener('click', grid.clear);
+	};
+
+	return () =>
+	{
+		gridListeners();
+		newGameListener();
+	};
+})();
 
 function initialize()
 {
