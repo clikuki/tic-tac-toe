@@ -69,10 +69,10 @@ const grid = (function ()
 
 const setEventListeners = (function ()
 {
+	let currPlayer = 1;
+
 	const gridListeners = (() =>
 	{
-		let currPlayer = 1;
-
 		const addMarkCallBack = (e) =>
 		{
 			if(e.target.textContent !== '') return;
@@ -94,10 +94,16 @@ const setEventListeners = (function ()
 		};
 	})();
 
-	const newGameListener = () =>
+	const newGameListener = (() =>
 	{
-		newGameBtn.addEventListener('click', grid.clear);
-	};
+		function newGameEvent()
+		{
+			grid.clear();
+			currPlayer = 1;
+		}
+
+		return newGameBtn.addEventListener('click', newGameEvent);
+	})();
 
 	return () =>
 	{
