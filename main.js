@@ -2,7 +2,7 @@ const gridEl = document.querySelectorAll('#grid > .gridSpace');
 const winDisplay = document.querySelector('#winDisplay');
 const newGameBtn = document.querySelector('#newGame');
 
-const grid = (() =>
+const grid = ((gridElement) =>
 {
 	// private
 
@@ -10,7 +10,7 @@ const grid = (() =>
 	{
 		const arr = [];
 
-		for(let i = 0; i < gridEl.length; i++)
+		for(let i = 0; i < gridElement.length; i++)
 		{
 			arr.push(null);
 		}
@@ -20,7 +20,7 @@ const grid = (() =>
 
 	function updateGrid()
 	{
-		for(const [i, gridSpace] of Object.entries(gridEl))
+		for(const [i, gridSpace] of Object.entries(gridElement))
 		{
 			if(gridMarksArray[i] === null)
 			{
@@ -41,7 +41,7 @@ const grid = (() =>
 	{
 		gridMarksArray.length = 0;
 
-		for(let i = 0; i < gridEl.length; i++)
+		for(let i = 0; i < gridElement.length; i++)
 		{
 			gridMarksArray.push(null);
 		}
@@ -66,11 +66,12 @@ const grid = (() =>
 		placeAt,
 		getGrid,
 	};
-})();
+})(gridEl);
 
-(function ()
+(() =>
 {
 	let currPlayer = 1;
+	let winStateReached = false;
 
 	const gridListeners = (() =>
 	{
@@ -86,77 +87,172 @@ const grid = (() =>
 			else currPlayer = 0;
 		}
 
-		function checkIfWin()
+		function displayWinMessage()
 		{
-			const gridMarks = grid.getGrid();
+			const winner = getWinner();
 
-			function checkRows()
-			{
-				const rowsArray = [];
+			// return if there is no winner
+			if(winner === null) return;
 
-				for(let i = 0; i < gridMarks.length; i += 3)
-				{
-					rowsArray.push(gridMarks.slice(i, i + 3));
-				}
+			winStateReached = true;
 
-				for(const row of rowsArray)
-				{
-					const currMarker = row[0];
+			const winMessage = winner ? 'player 1 has won' : 'player 2 has won';
 
-					if(currMarker !== null)
-					{
-						if(row.every((val) => val === currMarker))
-						{
-							return currMarker;
-						}
-					}
-				}
-
-				// if loop has been exited, then no rows are equal
-				return false;
-			}
-
-			const winner = checkRows();
-			if(winner !== false && winDisplay.textContent === '')
-			{
-				if(winner)
-				{
-					winDisplay.textContent = 'player 1 has won!';
-				}
-				else
-				{
-					winDisplay.textContent = 'player 2 has won!';
-				}
-			}
+			winDisplay.textContent = winMessage;
 		}
 
-		function callbackCollection(e)
+		function gridSpaceCallBack(e)
 		{
+			if(winStateReached) return;
+
 			addMark(e);
-			checkIfWin();
+			displayWinMessage();
 		}
 
 		return () =>
-		{
+		{ // returns loop to add event listener to all grid spaces
 			for(const gridSpace of gridEl)
 			{
-				gridSpace.addEventListener('click', callbackCollection);
+				gridSpace.addEventListener('click', gridSpaceCallBack);
 			}
 		};
 	})();
 
 	const newGameListener = (() =>
 	{
-		function newGameEvent()
+		function resetGame()
 		{
 			grid.clear();
+
 			currPlayer = 1;
+			winStateReached = false;
 			winDisplay.textContent = '';
 		}
 
-		return () => newGameBtn.addEventListener('click', newGameEvent);
+		return () => newGameBtn.addEventListener('click', resetGame);
 	})();
 
 	gridListeners();
 	newGameListener();
 })();
+
+function getWinner()
+{
+	const gridMarks = grid.getGrid();
+
+	function getRows()
+	{
+		const rowsArray = [];
+
+		const chunk = 3;
+		for(let i = 0; i < gridMarks.length; i += chunk)
+		{
+			rowsArray.push(gridMarks.slice(i, i + chunk));
+		}
+
+		return rowsArray;
+	}
+
+	function getColumns()
+	{
+		const rowsArray = getRows();
+		const columnArray = [];
+
+		for(let i = 0; i < rowsArray.length; i++)
+		{
+			const column = [];
+
+			rowsArray.forEach((row) => column.push(row[i]));
+
+			columnArray.push(column);
+		}
+
+		return columnArray;
+	}
+
+	function getDiagonals()
+	{
+		const rowsArray = getRows();
+		const leftDiagonal = [];
+		const rightDiagonal = [];
+
+		for(let j = 0; j < rowsArray.length; j++)
+		{
+			leftDiagonal.push(rowsArray[j][(rowsArray.length - 1) - j]);
+			rightDiagonal.push(rowsArray[j][j]);
+		}
+
+		return [leftDiagonal, rightDiagonal];
+	}
+
+	// checks if arrays have only one type of element ie. [1,1,1] but not [1,2,3];
+	function ifSameElements(...array)
+	{
+		for(const subArray of array)
+		{
+			const hasNull = ifArrayHasNull(subArray);
+
+			if(!hasNull)
+			{
+				const [firstEl] = subArray;
+
+				if(subArray.every((el) => el === firstEl))
+				{ // if all elements equal the first element, then return first element as winner
+					return firstEl;
+				}
+			}
+		}
+
+		// if loop has been exited, then no arrays passed
+		return null;
+	}
+
+	function ifArrayHasNull(array)
+	{
+		return array.some((el) => el === null);
+	}
+
+	const threesArray = [...getRows(), ...getColumns(), ...getDiagonals()];
+
+	return ifSameElements(...threesArray);
+}
+
+// function checkColumns()
+// {
+// 	console.log(getColumns());
+// }
+
+// function checkRows()
+// {
+// 	const rowsArray = getRows();
+
+// 	for(const row of rowsArray)
+// 	{
+// 		const currMarker = row[0];
+
+// 		if(currMarker !== null)
+// 		{
+// 			if(row.every((val) => val === currMarker))
+// 			{
+// 				return currMarker;
+// 			}
+// 		}
+// 	}
+
+// 	// if loop has been exited, then no rows are equal
+// 	return false;
+// }
+
+// checkColumns();
+// const winner = checkRows();
+// if(winner !== false && winDisplay.textContent === '')
+// {
+// 	if(winner)
+// 	{
+// 		winDisplay.textContent = 'player 1 has won!';
+// 	}
+// 	else
+// 	{
+// 		winDisplay.textContent = 'player 2 has won!';
+// 	}
+// }
