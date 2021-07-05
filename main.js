@@ -1,6 +1,4 @@
 const gridEl = document.querySelectorAll('#grid > .gridSpace');
-const winDisplay = document.querySelector('#winDisplay');
-const newGameBtn = document.querySelector('#newGame');
 
 const grid = ((gridElement) =>
 {
@@ -51,12 +49,14 @@ const grid = ((gridElement) =>
 
 	function placeAt(markerType, pos)
 	{
-		if(markerType > 1 || markerType < 0) return;
-		if(pos > gridMarksArray.length - 1 || pos < 0) return;
-		if(gridMarksArray[pos] !== null) return;
+		if(markerType > 1 || markerType < 0) return 0;
+		if(pos > gridMarksArray.length - 1 || pos < 0) return 0;
+		if(gridMarksArray[pos] !== null) return 0;
 
 		gridMarksArray[pos] = markerType;
 		updateGrid();
+
+		return 1;
 	}
 
 	const getGrid = () => gridMarksArray;
@@ -70,6 +70,10 @@ const grid = ((gridElement) =>
 
 (() =>
 {
+	const newGameBtn = document.querySelector('#newGame');
+	const counterDiv = document.querySelector('#counterDiv');
+	const winDisplay = counterDiv.querySelector('#winDisplay');
+
 	let currPlayer = 1;
 	let winStateReached = false;
 
@@ -77,36 +81,68 @@ const grid = ((gridElement) =>
 	{
 		function addMark(e)
 		{
-			if(e.target.textContent !== '') return;
+			const gridSpace = e.target;
+			const gridIndex = Array.prototype.indexOf.call(gridEl, gridSpace);
+			const returnMessage = grid.placeAt(currPlayer, gridIndex);
 
-			const elIndex = Array.prototype.indexOf.call(gridEl, e.target);
-
-			grid.placeAt(currPlayer, elIndex);
+			if(returnMessage !== 1) return;
 
 			if(!currPlayer) currPlayer = 1;
 			else currPlayer = 0;
 		}
 
-		function displayWinMessage()
+		function displayWinMessage(winner)
 		{
-			const winner = getWinner();
-
-			// return if there is no winner
-			if(winner === null) return;
-
-			winStateReached = true;
-
 			const winMessage = winner ? 'player 1 has won' : 'player 2 has won';
 
+			winStateReached = true;
 			winDisplay.textContent = winMessage;
 		}
+
+		function updateCounterDisplay(playerScores)
+		{
+			const [counter1, counter2] = counterDiv.querySelectorAll('.playerCounter .score');
+
+			counter1.textContent = playerScores.player1;
+			counter2.textContent = playerScores.player2;
+		}
+
+		const addToCounter = (() =>
+		{
+			const playerScores = {
+				player1: 0,
+				player2: 0,
+			};
+
+			return (winner) =>
+			{
+				if(winner)
+				{
+					playerScores.player1 += 1;
+				}
+				else
+				{
+					playerScores.player2 += 1;
+				}
+
+				return playerScores;
+			};
+		})();
 
 		function gridSpaceCallBack(e)
 		{
 			if(winStateReached) return;
 
 			addMark(e);
-			displayWinMessage();
+
+			const winner = getWinner();
+			if(winner !== null)
+			{
+				const scoreObj = addToCounter(winner);
+
+				updateCounterDisplay(scoreObj);
+				displayWinMessage(winner);
+			}
 		}
 
 		return () =>
@@ -216,43 +252,3 @@ function getWinner()
 
 	return ifSameElements(...threesArray);
 }
-
-// function checkColumns()
-// {
-// 	console.log(getColumns());
-// }
-
-// function checkRows()
-// {
-// 	const rowsArray = getRows();
-
-// 	for(const row of rowsArray)
-// 	{
-// 		const currMarker = row[0];
-
-// 		if(currMarker !== null)
-// 		{
-// 			if(row.every((val) => val === currMarker))
-// 			{
-// 				return currMarker;
-// 			}
-// 		}
-// 	}
-
-// 	// if loop has been exited, then no rows are equal
-// 	return false;
-// }
-
-// checkColumns();
-// const winner = checkRows();
-// if(winner !== false && winDisplay.textContent === '')
-// {
-// 	if(winner)
-// 	{
-// 		winDisplay.textContent = 'player 1 has won!';
-// 	}
-// 	else
-// 	{
-// 		winDisplay.textContent = 'player 2 has won!';
-// 	}
-// }
