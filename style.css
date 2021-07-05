@@ -27,19 +27,57 @@ a:focus-visible {
 
 #counterDiv
 {
+	position: relative;
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
 
 	width: 80%;
+	min-height: 50px;
 }
 
-.playerCounter
+#counterDiv .playerCounter
 {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
+	min-width: 100px;
+}
+
+#counterDiv .playerCounter:first-child
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#counterDiv .playerCounter:last-child
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.playerCounter .name
+{
+	min-width: 50px;
+	text-align: center;
+
+	border-radius: 10px;
+	padding: 5px;
+}
+
+.playerCounter .name.hover-bg:hover
+{
+	background-color: #fdeb84;
+	cursor: pointer;
+}
+
+.playerCounter .name input
+{
+	width: 100px;
+	text-align: center;
 }
 
 #grid
@@ -83,4 +121,12 @@ a:focus-visible {
 {
 	background-color: #cecece;
 	box-shadow: 5px 5px 3px;
+}
+
+.template
+{
+	position: absolute;
+	top: 0;
+
+	visibility: hidden;
 }

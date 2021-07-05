@@ -12,12 +12,12 @@
 		<h1 id="title">Tic-Tac-Toe</h1>
 		<div id="counterDiv">
 			<div class="playerCounter" id="player1">
-				<span class="name">Player 1</span>
+				<span class="name hover-bg" title="Change name">Player 1</span>
 				<span class="score">0</span>
 			</div>
 			<span id="winDisplay"></span>
 			<div class="playerCounter" id="player2">
-				<span class="name">Player 2</span>
+				<span class="name hover-bg" title="Change name">Player 2</span>
 				<span class="score">0</span>
 			</div>
 		</div>
@@ -37,6 +37,8 @@
 			<p>Site by: <a href="https://github.com/clikuki" target="_blank">Clikuki</a></p>
 		</div>
 	</main>
+	<div id="nameInputTemplate" class="template"><span class="name"><input type="text"></span></div>
+	<div id="nameDisplayTemplate" class="template"><span class="name hover-bg" title="Change name"></span></span></div>
 	<script src="main.js"></script>
 </body>
 </html>

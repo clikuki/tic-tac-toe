@@ -159,6 +159,45 @@ const grid = ((gridElement) =>
 		};
 	})();
 
+	// allow players to change their name
+	const changeNameListener = (() =>
+	{
+		const nameDisplays = counterDiv.querySelectorAll('.playerCounter .name');
+		const nameInputTemplate = document.querySelector('#nameInputTemplate > .name');
+		const nameDisplayTemplate = document.querySelector('#nameDisplayTemplate > .name');
+
+		function replaceWithInput(eventA)
+		{
+			const nameInput = nameInputTemplate.cloneNode(true);
+
+			nameInput.firstChild.value = eventA.target.textContent;
+			nameInput.addEventListener('keydown', setName);
+
+			eventA.target.replaceWith(nameInput);
+			nameInput.firstChild.focus();
+		}
+
+		function setName(eventB)
+		{
+			if(eventB.key === 'Enter' && eventB.target.value !== '')
+			{
+				const nameDisplay = nameDisplayTemplate.cloneNode();
+				nameDisplay.textContent = eventB.target.value;
+				nameDisplay.addEventListener('click', replaceWithInput);
+
+				eventB.target.replaceWith(nameDisplay);
+			}
+		}
+
+		return () =>
+		{
+			for(const nameEl of nameDisplays)
+			{
+				nameEl.addEventListener('click', replaceWithInput);
+			}
+		};
+	})();
+
 	// callback for new game btn, contains func to reset game
 	const newGameListener = (() =>
 	{
@@ -175,6 +214,7 @@ const grid = ((gridElement) =>
 	})();
 
 	gridListeners();
+	changeNameListener();
 	newGameListener();
 })();
 
