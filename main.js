@@ -96,11 +96,8 @@ const grid = ((gridElement) =>
 			else currPlayer = 0;
 		}
 
-		function displayWinMessage(winner)
+		function displayMessage(winMessage)
 		{
-			const winMessage = winner ? 'player 1 has won' : 'player 2 has won';
-
-			winStateReached = true;
 			winDisplay.textContent = winMessage;
 		}
 
@@ -144,9 +141,15 @@ const grid = ((gridElement) =>
 			if(winner !== null)
 			{
 				const scoreObj = addToCounter(winner);
+				const winMessage = winner ? 'player 1 has won' : 'player 2 has won';
 
+				winStateReached = true;
 				updateCounterDisplay(scoreObj);
-				displayWinMessage(winner);
+				displayMessage(winMessage);
+			}
+			else if(gameIsTied())
+			{
+				displayMessage('Game is tied!');
 			}
 		}
 
@@ -217,6 +220,18 @@ const grid = ((gridElement) =>
 	changeNameListener();
 	newGameListener();
 })();
+
+function gameIsTied()
+{
+	const gridMarks = grid.getGrid();
+
+	if(gridMarks.every((el) => el !== null))
+	{
+		return true;
+	}
+
+	return false;
+}
 
 // checks if a win has been reached
 // returns the winner if game has been won
