@@ -1,14 +1,16 @@
 const gridEl = document.querySelectorAll('#grid > .gridSpace');
 
+// grid manipulator, controls both the DOM grid and array grid
 const grid = ((gridElement) =>
 {
 	// private
 
+	// an iife to create an array of length 9 containing null
 	const gridMarksArray = (() =>
 	{
 		const arr = [];
 
-		for(let i = 0; i < gridElement.length; i++)
+		for(let i = 0; i < 9; i++)
 		{
 			arr.push(null);
 		}
@@ -37,11 +39,9 @@ const grid = ((gridElement) =>
 
 	function clear()
 	{
-		gridMarksArray.length = 0;
-
 		for(let i = 0; i < gridElement.length; i++)
 		{
-			gridMarksArray.push(null);
+			gridMarksArray[i] = null;
 		}
 
 		updateGrid();
@@ -59,6 +59,7 @@ const grid = ((gridElement) =>
 		return 1;
 	}
 
+	// returns the board array
 	const getGrid = () => gridMarksArray;
 
 	return {
@@ -68,17 +69,21 @@ const grid = ((gridElement) =>
 	};
 })(gridEl);
 
+// contains addeventlisteners and function associated with the events
 (() =>
 {
 	const newGameBtn = document.querySelector('#newGame');
 	const counterDiv = document.querySelector('#counterDiv');
 	const winDisplay = counterDiv.querySelector('#winDisplay');
 
+	// 1 === X, 0 === O
 	let currPlayer = 1;
 	let winStateReached = false;
 
+	// callback for grid spaces, also contains functions for grid
 	const gridListeners = (() =>
 	{
+		// adds a mark to the board
 		function addMark(e)
 		{
 			const gridSpace = e.target;
@@ -154,6 +159,7 @@ const grid = ((gridElement) =>
 		};
 	})();
 
+	// callback for new game btn, contains func to reset game
 	const newGameListener = (() =>
 	{
 		function resetGame()
@@ -172,6 +178,9 @@ const grid = ((gridElement) =>
 	newGameListener();
 })();
 
+// checks if a win has been reached
+// returns the winner if game has been won
+// else, it returns null
 function getWinner()
 {
 	const gridMarks = grid.getGrid();
@@ -221,14 +230,13 @@ function getWinner()
 		return [leftDiagonal, rightDiagonal];
 	}
 
-	// checks if arrays have only one type of element ie. [1,1,1] but not [1,2,3];
+	// checks if arrays have only one type of element, [1,1,1] but not [1,2,3];
+	// also returns if arrays have null even if it is the only array, so no [null, null, null]
 	function ifSameElements(...array)
 	{
 		for(const subArray of array)
 		{
-			const hasNull = ifArrayHasNull(subArray);
-
-			if(!hasNull)
+			if(!arrayHasNull(subArray))
 			{
 				const [firstEl] = subArray;
 
@@ -243,7 +251,7 @@ function getWinner()
 		return null;
 	}
 
-	function ifArrayHasNull(array)
+	function arrayHasNull(array)
 	{
 		return array.some((el) => el === null);
 	}
